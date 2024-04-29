@@ -16,7 +16,7 @@ class GroceryDetailsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Image.network(
-              'https://app-backend-06lr.onrender.com/grocery_image_$groceryIndex.jpg',
+              'https://app-backend-jo8j.onrender.com/grocery_image_$groceryIndex.jpg',
               height: 300.0,
               fit: BoxFit.cover,
             ),

@@ -6,7 +6,6 @@ class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _AuthScreenState createState() => _AuthScreenState();
 }
 
@@ -15,17 +14,14 @@ class _AuthScreenState extends State<AuthScreen> {
   String _email = '';
   String _password = '';
   bool _isLogin = true;
-  bool _isAdmin = false;
 
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       final url = _isLogin
-          ? Uri.parse('https://app-backend-06lr.onrender.com/login')
-          : Uri.parse('https://app-backend-06lr.onrender.com/signup');
-      final requestBody = _isLogin
-          ? {'email': _email, 'password': _password, 'isAdmin': _isAdmin}
-          : {'email': _email, 'password': _password, 'isAdmin': _isAdmin};
+          ? Uri.parse('https://app-backend-jo8j.onrender.com/login')
+          : Uri.parse('https://app-backend-jo8j.onrender.com/signup');
+      final requestBody = {'email': _email, 'password': _password};
       final response = await http.post(
         url,
         body: json.encode(requestBody),
@@ -34,7 +30,8 @@ class _AuthScreenState extends State<AuthScreen> {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final user = data['user'];
-        final isAdmin = data['isAdmin'];
+        final isAdmin =
+            user['email'] == 'admin' && user['password'] == 'password';
         if (isAdmin) {
           Navigator.pushReplacementNamed(context, '/admin-home',
               arguments: user);
@@ -101,15 +98,6 @@ class _AuthScreenState extends State<AuthScreen> {
                   },
                   onSaved: (value) {
                     _password = value!;
-                  },
-                ),
-                CheckboxListTile(
-                  title: const Text('Admin'),
-                  value: _isAdmin,
-                  onChanged: (value) {
-                    setState(() {
-                      _isAdmin = value!;
-                    });
                   },
                 ),
                 const SizedBox(height: 16.0),

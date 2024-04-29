@@ -100,7 +100,7 @@ class HomeScreen extends StatelessWidget {
   }
 
   Future<List<Map<String, dynamic>>> _fetchGroceryItems() async {
-    final url = Uri.parse('https://app-backend-06lr.onrender.com/groceries');
+    final url = Uri.parse('https://app-backend-jo8j.onrender.com/groceries');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
