@@ -6,6 +6,7 @@ class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _AuthScreenState createState() => _AuthScreenState();
 }
 
@@ -34,14 +35,14 @@ class _AuthScreenState extends State<AuthScreen> {
             user['email'] == 'admin' && user['password'] == 'password';
         if (isAdmin) {
           Navigator.pushReplacementNamed(context, '/admin-home',
-              arguments: user);
+              arguments: isAdmin);
         } else {
-          Navigator.pushReplacementNamed(context, '/home', arguments: user);
+          Navigator.pushReplacementNamed(context, '/home', arguments: isAdmin);
         }
       } else if (response.statusCode == 409) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('User already exists. Please try again.'),
+          const SnackBar(
+            content: Text('User already exists. Please try again.'),
             backgroundColor: Colors.red,
           ),
         );
