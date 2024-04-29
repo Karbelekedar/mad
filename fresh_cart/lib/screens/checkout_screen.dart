@@ -24,7 +24,7 @@ class CheckoutScreen extends StatelessWidget {
             const SizedBox(height: 20.0),
             // Display the order summary, including the total amount
             const Text(
-              'Total: \$49.95',
+              'Total: Rs.49.95',
               style: TextStyle(
                 fontSize: 20.0,
                 fontWeight: FontWeight.bold,

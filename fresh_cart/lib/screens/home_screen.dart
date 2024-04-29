@@ -80,7 +80,7 @@ class HomeScreen extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 10.0, vertical: 5.0),
                           child: Text(
-                            '\$${item['price']}',
+                            'Rs.${item['price']}',
                             style: TextStyle(
                               fontSize: 14.0,
                               color: Colors.grey[600],

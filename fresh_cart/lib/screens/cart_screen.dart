@@ -20,7 +20,7 @@ class CartScreen extends StatelessWidget {
               fit: BoxFit.cover,
             ),
             title: Text('Grocery Item $index'),
-            subtitle: const Text('\$9.99'),
+            subtitle: const Text('Rs.9.99'),
             trailing: IconButton(
               icon: const Icon(Icons.remove_circle),
               onPressed: () {
