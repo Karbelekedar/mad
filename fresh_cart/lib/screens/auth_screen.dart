@@ -20,7 +20,10 @@ class _AuthScreenState extends State<AuthScreen> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      final url = Uri.parse('https://app-backend-06lr.onrender.com/login');
+      final url = _isLogin
+          ? Uri.parse('https://app-backend-06lr.onrender.com/login')
+          : Uri.parse('https://app-backend-06lr.onrender.com/signup');
+
       final response = await http.post(
         url,
         body: json.encode({'email': _email, 'password': _password}),
@@ -32,9 +35,13 @@ class _AuthScreenState extends State<AuthScreen> {
         final isAdmin = data['isAdmin'];
         Navigator.pushReplacementNamed(context, '/home', arguments: isAdmin);
       } else {
+        final errorMessage = _isLogin
+            ? 'Invalid email or password. Please try again.'
+            : 'Failed to sign up. Please try again.';
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Invalid email or password. Please try again.'),
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: Colors.red,
           ),
         );
       }
