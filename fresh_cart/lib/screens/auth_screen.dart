@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _AuthScreenState createState() => _AuthScreenState();
 }
 
@@ -13,19 +16,22 @@ class _AuthScreenState extends State<AuthScreen> {
   String _password = '';
   bool _isLogin = true;
 
-  // Hardcoded user credentials for demonstration
-  final String _userEmail = 'user@example.com';
-  final String _userPassword = 'password123';
-
-  void _submitForm() {
+  void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      if (_email == _userEmail && _password == _userPassword) {
-        // Assuming successful login/signup
-        Navigator.pushReplacementNamed(context, '/home');
+      final url = Uri.parse('http://localhost:5000/login');
+      final response = await http.post(
+        url,
+        body: json.encode({'email': _email, 'password': _password}),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final isAdmin = data['isAdmin'];
+        Navigator.pushReplacementNamed(context, '/home', arguments: isAdmin);
       } else {
-        // Show an error message to the user
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Invalid email or password. Please try again.'),
