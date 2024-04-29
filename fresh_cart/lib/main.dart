@@ -23,6 +23,7 @@ class MyApp extends StatelessWidget {
       home: const AuthScreen(),
       routes: {
         '/home': (ctx) => const HomeScreen(),
+        // '/admin-home': (ctx) => const AdminHomeScreen(),
         '/grocery-details': (ctx) => const GroceryDetailsScreen(),
         '/cart': (ctx) => const CartScreen(),
         '/checkout': (ctx) => const CheckoutScreen(),

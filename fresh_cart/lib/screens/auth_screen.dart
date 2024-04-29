@@ -15,25 +15,39 @@ class _AuthScreenState extends State<AuthScreen> {
   String _email = '';
   String _password = '';
   bool _isLogin = true;
+  bool _isAdmin = false;
 
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-
       final url = _isLogin
           ? Uri.parse('https://app-backend-06lr.onrender.com/login')
           : Uri.parse('https://app-backend-06lr.onrender.com/signup');
-
+      final requestBody = _isLogin
+          ? {'email': _email, 'password': _password, 'isAdmin': _isAdmin}
+          : {'email': _email, 'password': _password, 'isAdmin': _isAdmin};
       final response = await http.post(
         url,
-        body: json.encode({'email': _email, 'password': _password}),
+        body: json.encode(requestBody),
         headers: {'Content-Type': 'application/json'},
       );
-
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        final user = data['user'];
         final isAdmin = data['isAdmin'];
-        Navigator.pushReplacementNamed(context, '/home', arguments: isAdmin);
+        if (isAdmin) {
+          Navigator.pushReplacementNamed(context, '/admin-home',
+              arguments: user);
+        } else {
+          Navigator.pushReplacementNamed(context, '/home', arguments: user);
+        }
+      } else if (response.statusCode == 409) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('User already exists. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
       } else {
         final errorMessage = _isLogin
             ? 'Invalid email or password. Please try again.'
@@ -89,6 +103,15 @@ class _AuthScreenState extends State<AuthScreen> {
                     _password = value!;
                   },
                 ),
+                CheckboxListTile(
+                  title: const Text('Admin'),
+                  value: _isAdmin,
+                  onChanged: (value) {
+                    setState(() {
+                      _isAdmin = value!;
+                    });
+                  },
+                ),
                 const SizedBox(height: 16.0),
                 ElevatedButton(
                   onPressed: _submitForm,
@@ -100,9 +123,11 @@ class _AuthScreenState extends State<AuthScreen> {
                       _isLogin = !_isLogin;
                     });
                   },
-                  child: Text(_isLogin
-                      ? 'Don\'t have an account? Sign up'
-                      : 'Already have an account? Login'),
+                  child: Text(
+                    _isLogin
+                        ? 'Don\'t have an account? Sign up'
+                        : 'Already have an account? Login',
+                  ),
                 ),
               ],
             ),
