@@ -14,7 +14,7 @@ class CartScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           return ListTile(
             leading: Image.network(
-              'https://example.com/grocery_image_$index.jpg',
+              'https://app-backend-06lr.onrender.com/grocery_image_$index.jpg',
               width: 50.0,
               height: 50.0,
               fit: BoxFit.cover,

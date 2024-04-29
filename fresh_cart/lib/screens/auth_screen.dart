@@ -20,7 +20,7 @@ class _AuthScreenState extends State<AuthScreen> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      final url = Uri.parse('http://localhost:5000/login');
+      final url = Uri.parse('https://app-backend-06lr.onrender.com/login');
       final response = await http.post(
         url,
         body: json.encode({'email': _email, 'password': _password}),
