@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:fresh_cart/screens/cart_provider.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,11 +23,17 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _fetchGroceryItems() async {
     final url = Uri.parse('https://app-backend-jo8j.onrender.com/groceries');
     final response = await http.get(url);
-
     if (response.statusCode == 200) {
       final data = json.decode(response.body) as List<dynamic>;
       setState(() {
-        _groceryItems = data.cast<Map<String, dynamic>>();
+        _groceryItems = data.map((item) {
+          return {
+            'id': item['_id'],
+            'imageUrl': item['imageUrl'],
+            'name': item['name'],
+            'price': item['price'],
+          };
+        }).toList();
       });
     } else {
       throw Exception('Failed to fetch grocery items');
@@ -34,26 +42,46 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isAdmin = ModalRoute.of(context)!.settings.arguments as bool;
+    final cartItemCount = Provider.of<CartProvider>(context).cartItems.length;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Grocery App'),
         actions: [
-          if (isAdmin)
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () {
-                // Navigate to the add grocery item screen
-                Navigator.pushNamed(context, '/add-grocery');
-              },
-            ),
-          IconButton(
-            icon: const Icon(Icons.shopping_cart),
-            onPressed: () {
-              // Navigate to the cart screen
-              Navigator.pushNamed(context, '/cart');
-            },
+          Stack(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.shopping_cart),
+                onPressed: () {
+                  // Navigate to the cart screen
+                  Navigator.pushNamed(context, '/cart');
+                },
+              ),
+              if (cartItemCount > 0)
+                Positioned(
+                  right: 6,
+                  top: 6,
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 16,
+                      minHeight: 16,
+                    ),
+                    child: Text(
+                      cartItemCount.toString(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
           ),
         ],
       ),
@@ -95,7 +123,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 10.0, vertical: 5.0),
+                      horizontal: 10.0,
+                      vertical: 5.0,
+                    ),
                     child: Text(
                       'Rs.${item['price']}',
                       style: TextStyle(

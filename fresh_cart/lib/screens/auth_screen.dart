@@ -31,13 +31,13 @@ class _AuthScreenState extends State<AuthScreen> {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final user = data['user'];
-        final isAdmin =
-            user['email'] == 'admin' && user['password'] == 'password';
+        final isAdmin = user['email'] == 'admin@gmail.com' &&
+            user['password'] == 'password';
         if (isAdmin) {
           Navigator.pushReplacementNamed(context, '/admin-home',
-              arguments: isAdmin);
+              arguments: true);
         } else {
-          Navigator.pushReplacementNamed(context, '/home', arguments: isAdmin);
+          Navigator.pushReplacementNamed(context, '/home', arguments: false);
         }
       } else if (response.statusCode == 409) {
         ScaffoldMessenger.of(context).showSnackBar(

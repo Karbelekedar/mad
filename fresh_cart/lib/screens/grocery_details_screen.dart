@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:fresh_cart/screens/cart_provider.dart';
+import 'package:provider/provider.dart';
 
 class GroceryDetailsScreen extends StatelessWidget {
   const GroceryDetailsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final int groceryIndex = ModalRoute.of(context)!.settings.arguments as int;
+    final Map<String, dynamic> item =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
 
     return Scaffold(
       appBar: AppBar(
@@ -16,7 +19,7 @@ class GroceryDetailsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Image.network(
-              'https://app-backend-jo8j.onrender.com/grocery_image_$groceryIndex.jpg',
+              item['imageUrl'],
               height: 300.0,
               fit: BoxFit.cover,
             ),
@@ -26,7 +29,7 @@ class GroceryDetailsScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Grocery Item $groceryIndex',
+                    item['name'],
                     style: const TextStyle(
                       fontSize: 24.0,
                       fontWeight: FontWeight.bold,
@@ -38,9 +41,9 @@ class GroceryDetailsScreen extends StatelessWidget {
                     style: TextStyle(fontSize: 16.0),
                   ),
                   const SizedBox(height: 20.0),
-                  const Text(
-                    'Rs.9.99',
-                    style: TextStyle(
+                  Text(
+                    'Rs.${item['price']}',
+                    style: const TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
                     ),
@@ -49,6 +52,14 @@ class GroceryDetailsScreen extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () {
                       // Add the item to the cart
+                      Provider.of<CartProvider>(context, listen: false)
+                          .addToCart(
+                        CartItem(
+                          id: item['id'],
+                          name: item['name'],
+                          price: item['price'],
+                        ),
+                      );
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Item added to cart'),
