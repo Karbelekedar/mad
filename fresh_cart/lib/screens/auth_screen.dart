@@ -59,9 +59,7 @@ class _AuthScreenState extends State<AuthScreen> {
       );
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        final user = data['user'];
-        final isAdmin = user['email'] == 'admin@gmail.com' &&
-            user['password'] == 'password';
+        final isAdmin = data['isAdmin'] ?? false;
         if (isAdmin) {
           Navigator.pushReplacementNamed(context, '/admin-home');
         } else {
