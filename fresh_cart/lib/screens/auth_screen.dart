@@ -16,6 +16,35 @@ class _AuthScreenState extends State<AuthScreen> {
   String _password = '';
   bool _isLogin = true;
 
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter an email address';
+    }
+    if (!value.contains('@')) {
+      return 'Please enter a valid email address';
+    }
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a password';
+    }
+    if (value.length < 8) {
+      return 'Password must be at least 8 characters long';
+    }
+    if (!value.contains(RegExp(r'[A-Z]'))) {
+      return 'Password must contain at least one uppercase letter';
+    }
+    if (!value.contains(RegExp(r'[a-z]'))) {
+      return 'Password must contain at least one lowercase letter';
+    }
+    if (!value.contains(RegExp(r'[0-9]'))) {
+      return 'Password must contain at least one digit';
+    }
+    return null;
+  }
+
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
@@ -34,10 +63,9 @@ class _AuthScreenState extends State<AuthScreen> {
         final isAdmin = user['email'] == 'admin@gmail.com' &&
             user['password'] == 'password';
         if (isAdmin) {
-          Navigator.pushReplacementNamed(context, '/admin-home',
-              arguments: true);
+          Navigator.pushReplacementNamed(context, '/admin-home');
         } else {
-          Navigator.pushReplacementNamed(context, '/home', arguments: false);
+          Navigator.pushReplacementNamed(context, '/home');
         }
       } else if (response.statusCode == 409) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -71,19 +99,13 @@ class _AuthScreenState extends State<AuthScreen> {
           padding: const EdgeInsets.all(16.0),
           child: Form(
             key: _formKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
             child: Column(
               children: [
                 TextFormField(
                   decoration: const InputDecoration(labelText: 'Email'),
                   keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value == null ||
-                        value.isEmpty ||
-                        !value.contains('@')) {
-                      return 'Please enter a valid email address.';
-                    }
-                    return null;
-                  },
+                  validator: _validateEmail,
                   onSaved: (value) {
                     _email = value!;
                   },
@@ -91,12 +113,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 TextFormField(
                   decoration: const InputDecoration(labelText: 'Password'),
                   obscureText: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty || value.length < 6) {
-                      return 'Password must be at least 6 characters long.';
-                    }
-                    return null;
-                  },
+                  validator: _validatePassword,
                   onSaved: (value) {
                     _password = value!;
                   },
